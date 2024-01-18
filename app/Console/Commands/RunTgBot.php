@@ -27,16 +27,23 @@ class RunTgBot extends Command
     public function handle()
     {
         $tgBotService = new TgBotService();
+        static $offset = 0;
         while (true) {
-            $res = $tgBotService->getUpdates();
+            echo $offset . PHP_EOL;
+            $response = $tgBotService->getUpdates($offset);
 
-            if (!empty($res->result)) {
-                foreach ($res->result as $result)
+            if (!empty($response->result)) {
+                $updateIds = array_map(fn($update) => $update->update_id, $response->result);
+                $maxUpdateId = max($updateIds);
+                $offset = $maxUpdateId + 1;
+
+                echo $offset;
+                foreach ($response->result as $update)
                 {
-                    echo $result->message->from->first_name;
+                    echo $update->message->from->first_name;
                 }
             }
         }
-        return Command::SUCCESS;
+        //return Command::SUCCESS;
     }
 }

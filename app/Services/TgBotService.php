@@ -16,10 +16,19 @@ class TgBotService
         ]);
     }
 
-    public function getUpdates()
+    public function getUpdates(int $offset)
     {
-        $responce = $this->client->get('getUpdates');
-        $res = $responce->getBody()->getContents();
+        $options = ['timeout' => 10];
+        if ($offset > 0) {
+            $options['offset'] = $offset;
+        }
+
+        $response = $this->client->get('getUpdates', [
+            'query' => $options
+        ]);
+        $res = $response->getBody()->getContents();
         return json_decode($res);
     }
+
+
 }
