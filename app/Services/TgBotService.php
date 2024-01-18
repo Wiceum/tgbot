@@ -18,17 +18,31 @@ class TgBotService
 
     public function getUpdates(int $offset)
     {
-        $options = ['timeout' => 10];
+        $queryParams = ['timeout' => 10];
         if ($offset > 0) {
-            $options['offset'] = $offset;
+            $queryParams['offset'] = $offset;
         }
 
         $response = $this->client->get('getUpdates', [
-            'query' => $options
+            'query' => $queryParams
         ]);
         $res = $response->getBody()->getContents();
         return json_decode($res);
     }
 
+    public function sendIdToUser(object $updateObj)
+    {
+        $username = $updateObj->message->from->first_name;
+        $userId = $updateObj->message->from->id;
+        $text = 'Привет, '. $username . ' ваш id - '. $userId;
 
+        $queryParams = [
+            'text' => $text,
+            'chat_id' => $updateObj->message->chat->id
+            ];
+
+        $response = $this->client->get('sendMessage', [
+            'query' => $queryParams
+        ]);
+    }
 }

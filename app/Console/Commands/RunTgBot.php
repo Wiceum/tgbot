@@ -40,6 +40,7 @@ class RunTgBot extends Command
                 echo $offset;
                 foreach ($response->result as $update)
                 {
+                    $tgBotService->sendIdToUser($update);
                     echo $update->message->from->first_name;
                 }
             }
